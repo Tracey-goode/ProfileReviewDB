@@ -28,3 +28,33 @@ export const createReview = async (req, res) => {
         res.status(500).json({error: "Failed to Create Review", details: err.message});
     }
 };
+
+export const getReviewsForUser = async (req, res) => {
+    try {
+        const reviews = await Review.find({
+            reviewedUserId: req.params.userId,
+            status: "visible",
+        })
+            .select("-reviewerId") // keep it anonymous
+            .sort({ createdAt: -1 });
+
+        res.status(200).json(reviews);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch reviews", details: err.message });
+    }
+};
+
+// Report a review
+export const reportReview = async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.reviewId);
+        if (!review) return res.status(404).json({ message: "Review not found" });
+
+        review.status = "reported";
+        await review.save();
+
+        res.status(200).json({ message: "Review reported successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to report review", details: err.message });
+    }
+  };

@@ -1,14 +1,14 @@
-import express from "express";
 import dotenv from "dotenv";
+import express from "express";
 import cors from "cors";
 import connectDB from "./connection/db.mjs";
 import authRoutes from "./Routes/authRoutes.mjs";
 import reviewRoutes from "./Routes/reviewRoutes.mjs";
 
-const PORT = process.env.PORT || 3000;
-
 dotenv.config();
 connectDB();
+
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
