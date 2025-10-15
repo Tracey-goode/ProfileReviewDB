@@ -8,6 +8,10 @@ export const registerUser = async (req, res) => {
 
     try{
 
+        if(!email || !password) {
+            return res.staut(400).json({message: "Required Fields"});
+        }
+
         if(!validateEmail(email)) {
             return res.status(400).json({message: "Invalid Email"});
         }
@@ -35,8 +39,8 @@ export const loginUser = async (req, res) => {
     const {email, password} = req.body;
     
     try{
-        const user = await User.findOne({email});
-        if (user && (await matchPassword(password, user.password))) {
+        const user = await User.findOne({email}); //defines user email
+        if (user && (await matchPassword(password, user.password))) { // user email and password + hash is true based off json below then success!
              res.json({
                 _id: user._id,
                 email: user.email,
