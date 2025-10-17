@@ -4,12 +4,12 @@ import Review from "../Schema/review.mjs";
 // Create a new (anon) Review
 
 export const createReview = async (req, res) => {
-    const {reviewedUserId, rating, text} = req.body;
+    const { reviewedUserId, rating, text } = req.body;
 
     try {
         const review = await Review.create({
             reviewerId: req.user._id,
-            reviewedUserId, 
+            reviewedUserId,
             rating,
             text,
         });
@@ -24,8 +24,8 @@ export const createReview = async (req, res) => {
                 createdAt: review.createdAt,
             },
         });
-    } catch(err) {
-        res.status(500).json({error: "Failed to Create Review", details: err.message});
+    } catch (err) {
+        res.status(500).json({ error: "Failed to Create Review", details: err.message });
     }
 };
 
@@ -35,7 +35,7 @@ export const getReviewsForUser = async (req, res) => {
             reviewedUserId: req.params.userId,
             status: "visible",
         })
-            .select("-reviewerId") // keep it anonymous
+            .select("reviewerId") // keep it anonymous
             .sort({ createdAt: -1 });
 
         res.status(200).json(reviews);
@@ -57,4 +57,4 @@ export const reportReview = async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Failed to report review", details: err.message });
     }
-  };
+};
