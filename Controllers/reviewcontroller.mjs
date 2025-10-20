@@ -3,12 +3,12 @@ import Review from "../Schema/review.mjs";
 
 // Create a new (anon) Review
 
-export const createReview = async (req, res) => {
+const createReview = async (req, res) => {
     const { reviewedUserId, rating, text } = req.body;
 
     try {
         const review = await Review.create({
-            reviewerId: req.user._id,
+            reviewerId: req.user.id,
             reviewedUserId,
             rating,
             text,
@@ -17,7 +17,7 @@ export const createReview = async (req, res) => {
         res.status(201).json({
             message: "Review Created Successfully",
             review: {
-                id: review._id,
+                id: review.id,
                 reviewedUserId: review.reviewedUserId,
                 rating: review.rating,
                 text: review.text,
@@ -29,7 +29,7 @@ export const createReview = async (req, res) => {
     }
 };
 
-export const getReviewsForUser = async (req, res) => {
+const getReviewsForUser = async (req, res) => {
     try {
         const reviews = await Review.find({
             reviewedUserId: req.params.userId,
@@ -45,7 +45,7 @@ export const getReviewsForUser = async (req, res) => {
 };
 
 // Report a review
-export const reportReview = async (req, res) => {
+const reportReview = async (req, res) => {
     try {
         const review = await Review.findById(req.params.reviewId);
         if (!review) return res.status(404).json({ message: "Review not found" });
@@ -58,3 +58,5 @@ export const reportReview = async (req, res) => {
         res.status(500).json({ error: "Failed to report review", details: err.message });
     }
 };
+
+export { createReview, getReviewsForUser, reportReview };

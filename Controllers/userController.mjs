@@ -4,7 +4,7 @@ import generateToken from "../Utility/gentoken.mjs";
 import { hashPassword, matchPassword } from "../Utility/hashPassword.mjs";
 
 //register
-export const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -17,7 +17,7 @@ export const registerUser = async (req, res) => {
         const user = await User.create({ email, password: hashed });
 
         res.status(201).json({
-            _id: user._id,
+            id: user.id,
             email: user.email,
             token: generateToken(user.id),
         });
@@ -27,7 +27,7 @@ export const registerUser = async (req, res) => {
 };
 
 // Login User 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email }); //defines user email
@@ -36,9 +36,9 @@ export const loginUser = async (req, res) => {
             res.status(401).json({ message: "Invalid Email or Password" })
         }
         res.json({
-            _id: user._id,
+            id: user.id,
             email: user.email,
-            token: generateToken(user._id),
+            token: generateToken(user.id),
         });
     } catch (err) {
         res.status(500).json({ message: "Login Error " });
@@ -46,9 +46,9 @@ export const loginUser = async (req, res) => {
 };
 
 //update user info
-export const update = async (req, res) => {
+const update = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user.id);
 
         if (!user) {
             return res.status(404).json({ message: "User not Found" })
@@ -64,7 +64,7 @@ export const update = async (req, res) => {
         res.status(200).json({
             message: "Profile updated successfully",
             user: {
-                id: updateUser._id,
+                id: updateUser.id,
                 email: updateUser.email,
                 bio: updateUser.bio,
                 height: updateUser.height,
@@ -79,23 +79,23 @@ export const update = async (req, res) => {
 
 // get user profile
 
-export const getProfile = async (req, res) => {
+const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select(
+        const user = await User.findById(req.user.id).select(
             "bio height weight kink"
         );
-        
+
         if (!user) {
             return res.status(404).json({ message: "User not Found" })
         }
-        
+
         const myReviews = await Review.find({
-            reviewerId: req.user._id,
+            reviewerId: req.user.id,
             status: "visible"
         })
             .select("rating text createdAt")
-            .sort({ createdAt: -1});
-        
+            .sort({ createdAt: -1 });
+
         const recReviews = await Review.find({
             reviewedUserId: req.params.userId,
             status: "visible"
@@ -116,20 +116,21 @@ export const getProfile = async (req, res) => {
 
 // delete account
 
-export const deleteAcc = async (req, res) => {
-    try{ 
-        const user = await User.findById(req.user._id);
-        
-        if (!user) {
-            return res.status(404).json({ message: "User not Found"})
-        }
-        
-        await User.deleteOne({ _id: req.user._id});
+const deleteAcc = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
 
-        await Review.deleteMany({ reviewerId: req.user._id});
+        if (!user) {
+            return res.status(404).json({ message: "User not Found" })
+        }
+
+        await User.deleteOne({ id: req.user.id });
+
+        await Review.deleteMany({ reviewerId: req.user.id });
 
         res.status(200).json({ message: "account deleted!!", token: null }); //token is removed from storage after deletion
-     } catch (err) {
-        res.status(500).json({ message: "failed to delete account"});
+    } catch (err) {
+        res.status(500).json({ message: "failed to delete account" });
     }
 }
+export { registerUser, loginUser, update, getProfile, deleteAcc };
