@@ -1,49 +1,48 @@
 import Review from "../Schema/review.mjs";
 import User from "../Schema/Users.mjs";
-import generateToken from "../Utility/gentoken.mjs";
-import { hashPassword, matchPassword } from "../Utility/hashPassword.mjs";
 
-//register
-const registerUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ message: "User Exists" });
-        }
+// //register
+// const registerUser = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
 
-        const hashed = await hashPassword(password);
-        const user = await User.create({ email, password: hashed });
+//         const userExists = await User.findOne({ email });
+//         if (userExists) {
+//             return res.status(400).json({ message: "User Exists" });
+//         }
 
-        res.status(201).json({
-            id: user.id,
-            email: user.email,
-            token: generateToken(user.id),
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Registration Error" });
-    }
-};
+//         const hashed = await hashPassword(password);
+//         const user = await User.create({ email, password: hashed });
 
-// Login User 
-const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email }); //defines user email
+//         res.status(201).json({
+//             id: user.id,
+//             email: user.email,
+//             token: generateToken(user.id),
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: "Registration Error" });
+//     }
+// };
 
-        if (!user || !(await matchPassword(password, user.password))) { // user email and password + hash is not true based off json below then invalid!
-            res.status(401).json({ message: "Invalid Email or Password" })
-        }
-        res.json({
-            id: user.id,
-            email: user.email,
-            token: generateToken(user.id),
-        });
-    } catch (err) {
-        res.status(500).json({ message: "Login Error " });
-    }
-};
+// // Login User 
+// const loginUser = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+//         const user = await User.findOne({ email }); //defines user email
+
+//         if (!user || !(await matchPassword(password, user.password))) { // user email and password + hash is not true based off json below then invalid!
+//             res.status(401).json({ message: "Invalid Email or Password" })
+//         }
+//         res.json({
+//             id: user.id,
+//             email: user.email,
+//             token: generateToken(user.id),
+//         });
+//     } catch (err) {
+//         res.status(500).json({ message: "Login Error " });
+//     }
+// };
 
 //update user info
 const update = async (req, res) => {
@@ -133,4 +132,4 @@ const deleteAcc = async (req, res) => {
         res.status(500).json({ message: "failed to delete account" });
     }
 }
-export { registerUser, loginUser, update, getProfile, deleteAcc };
+export { update, getProfile, deleteAcc };

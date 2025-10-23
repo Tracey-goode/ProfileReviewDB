@@ -3,15 +3,16 @@ import mongoose from "mongoose";
 
 dotenv.config();
 
-const connectionString = process.env.MONGO_URI || '';
+// console.log(" db.mjs loaded, MONGO_URI =", process.env.MONGO_URI);
+
+const connectionString = process.env.MONGO_URI || "";
 
 const connectDB = async() => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI);
+        await mongoose.connect(connectionString);
         console.log("MongoDB connected");
     } catch (error) {
         console.error("MongoDB connection failed:", error.message);
-        process.exit(1);
     }
 };
 
