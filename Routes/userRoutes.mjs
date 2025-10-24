@@ -23,7 +23,7 @@ router.put("/profile", protect, update);
 // --get all users
 router.get("/all", protect, getAllUsers);
 
-// --get user by id (must be after static routes)
+// --get user by id 
 router.get("/:id", protect, getUserById);
 
 //admin routes

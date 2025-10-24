@@ -14,7 +14,11 @@ This app inteds to be a dating app social media platform, that allows users to R
 ## utilities
 Password hashing - the process of converting a user's password into a unique, fixed length string of characters
 
-
+## Routes
+- /api/auth/login = User Login
+- /api/auth/register = Register new user
+- /api/user/allUser - gets all users, for home page
+- /api
 
 
 
