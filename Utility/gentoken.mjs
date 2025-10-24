@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 
-const generateToken = (id) => {
-    return jwt.sign({id}, process.env.JWT_SECRET, {
-        expiresIn: "15d",
-    });
-};
+// const generateToken = (id) => {
+//     return jwt.sign({id}, process.env.JWT_SECRET, {
+//         expiresIn: "15d",
+//     });
+// };
 
-export default generateToken;
+// export default generateToken;
 

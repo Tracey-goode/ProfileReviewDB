@@ -5,7 +5,8 @@ import { validateRegisterInput, validateLoginInput } from "../Middleware/Validat
 
 const router = express.Router();
 
-router.post("/register", validateRegisterInput, register);
-router.post("/login", validateLoginInput, login);
+router.post("/register",validateRegisterInput, register);
+
+router.post("/login",validateLoginInput, login);
 
 export default router;

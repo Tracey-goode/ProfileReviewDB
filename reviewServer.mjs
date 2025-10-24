@@ -6,7 +6,7 @@ import authRoutes from "./Routes/authRoutes.mjs";
 import reviewRoutes from "./Routes/reviewRoutes.mjs";
 import userRoutes from "./Routes/userRoutes.mjs";
 import { globalError } from "./Middleware/globalErr.mjs";
-import adminRoutes from "./Routes/adminRoutes.mjs"
+import adminRoutes from "./Routes/adminRoutes.mjs";
 
 //setup
 dotenv.config();
@@ -18,8 +18,10 @@ const app = express();
 
 //middleware 
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({ 
+    origin: "http://localhost:5173", // frontend origin
+    credentials: true,
+   }));
 //Routes
 
 app.use("/api/auth", authRoutes);

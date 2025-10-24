@@ -14,12 +14,9 @@ This app inteds to be a dating app social media platform, that allows users to R
 ## utilities
 Password hashing - the process of converting a user's password into a unique, fixed length string of characters
 
-## USER ROUTES
 
-/api/users/register	POST	Public	Register a new user
-/api/users/login	POST	Public	Log in and get JWT
-/api/users/logout	POST	Public	Logout (frontend removes token)
-/api/users/profile	GET	Protected	Get logged-in user’s own profile
-/api/users/profile	PUT	Protected	Update logged-in user’s profile (bio, height, weight, kink)
-/api/users/delete	DELETE	Protected	Delete logged-in user account and their reviews
-/api/users/public/:userId	GET	Public	Get another user’s public profile (optionally includes reviews about them)
+
+
+
+## Front End Link
+https://github.com/Tracey-goode/ProfileReviewFE

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../Schema/Users.mjs";
+// import { generateToken } from "../Utility/gentoken.mjs";
 import { validateEmail } from "../Utility/validateEmail.mjs";
 import { validatePassword } from "../Utility/validatepassword.mjs";
 
@@ -51,13 +52,15 @@ const register = async (req, res) => {
 // Login
 const login = async (req, res) => {
     const { email, password } = req.body;
-
+    
     try {
         const user = await User.findOne({ email });
+        console.log("Found user:", user);
         if (!user || user.password !== password)
             return res.status(400).json({ message: "Invalid email or password" });
-
+        console.log("Generating token...");
         const token = generateToken(user);
+        console.log("Token generated:", token);
 
         res.status(200).json({
             message: "Login successful",

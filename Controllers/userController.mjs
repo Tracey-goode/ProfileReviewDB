@@ -1,48 +1,6 @@
 import Review from "../Schema/review.mjs";
 import User from "../Schema/Users.mjs";
-
-
-// //register
-// const registerUser = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-
-//         const userExists = await User.findOne({ email });
-//         if (userExists) {
-//             return res.status(400).json({ message: "User Exists" });
-//         }
-
-//         const hashed = await hashPassword(password);
-//         const user = await User.create({ email, password: hashed });
-
-//         res.status(201).json({
-//             id: user.id,
-//             email: user.email,
-//             token: generateToken(user.id),
-//         });
-//     } catch (error) {
-//         res.status(500).json({ message: "Registration Error" });
-//     }
-// };
-
-// // Login User 
-// const loginUser = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//         const user = await User.findOne({ email }); //defines user email
-
-//         if (!user || !(await matchPassword(password, user.password))) { // user email and password + hash is not true based off json below then invalid!
-//             res.status(401).json({ message: "Invalid Email or Password" })
-//         }
-//         res.json({
-//             id: user.id,
-//             email: user.email,
-//             token: generateToken(user.id),
-//         });
-//     } catch (err) {
-//         res.status(500).json({ message: "Login Error " });
-//     }
-// };
+import mongoose from "mongoose";
 
 //update user info
 const update = async (req, res) => {
@@ -96,7 +54,7 @@ const getProfile = async (req, res) => {
             .sort({ createdAt: -1 });
 
         const recReviews = await Review.find({
-            reviewedUserId: req.params.userId,
+            reviewedUserId: req.user.id,
             status: "visible"
         })
             .select("rating text createdAt")
@@ -123,7 +81,7 @@ const deleteAcc = async (req, res) => {
             return res.status(404).json({ message: "User not Found" })
         }
 
-        await User.deleteOne({ id: req.user.id });
+        await User.deleteOne({ _id: req.user.id });
 
         await Review.deleteMany({ reviewerId: req.user.id });
 
@@ -132,4 +90,53 @@ const deleteAcc = async (req, res) => {
         res.status(500).json({ message: "failed to delete account" });
     }
 }
-export { update, getProfile, deleteAcc };
+// Get all users
+const getAllUsers = async (req, res) => {
+    try {
+        // Admin can see all fields including email
+        if (req.user.isAdmin) {
+            const users = await User.find()
+                .select("email bio height weight kink createdAt");
+            return res.status(200).json({ users });
+        }
+
+        // Non-admin users can only see public profile fields
+        const users = await User.find()
+            .select("bio height weight kink createdAt");
+        res.status(200).json({ users });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch users" });
+    }
+};
+
+// Get user by ID
+const getUserById = async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid user id" });
+        }
+
+        const user = await User.findById(req.params.id)
+            .select("email bio height weight kink createdAt");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const reviews = await Review.find({
+            reviewedUserId: req.params.id,
+            status: "visible"
+        })
+            .select("rating text createdAt")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            user,
+            reviews
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch user" });
+    }
+};
+
+export { update, getProfile, deleteAcc, getAllUsers, getUserById };
