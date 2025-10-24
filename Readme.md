@@ -18,7 +18,6 @@ Password hashing - the process of converting a user's password into a unique, fi
 - /api/auth/login = User Login
 - /api/auth/register = Register new user
 - /api/user/allUser - gets all users, for home page
-- /api
 
 
 
